@@ -6,7 +6,26 @@ return {
         local harpoon = require("harpoon")
         harpoon.setup()
 
-        vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
+        local function toggle_and_echo(callback)
+            local status, err = pcall(callback)
+            if status then
+                vim.api.nvim_echo({{'Harpooned that sucker', 'Normal'}}, true, {})
+            else
+                vim.api.nvim_echo({{'Error executing command', 'ErrorMsg'}}, true, {})
+            end
+        end
+
+        vim.keymap.set("n", "<leader>hp", function()
+            toggle_and_echo(function()
+                harpoon:list():append()
+            end)
+        end)
+
+        vim.keymap.set("n", "<C-e>", function()
+            toggle_and_echo(function()
+                harpoon.ui:toggle_quick_menu(harpoon:list())
+            end)
+        end)
         vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
         -- vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
